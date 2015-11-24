@@ -3,7 +3,7 @@
 #
 module Parslet::Atoms
   # The precedence module controls parenthesis during the #inspect printing
-  # of parslets. It is not relevant to other aspects of the parsing. 
+  # of parslets. It is not relevant to other aspects of the parsing.
   #
   module Precedence
     prec = 0
@@ -14,7 +14,7 @@ module Parslet::Atoms
     ALTERNATE  = (prec+=1)    # 'a' | 'b'
     OUTER      = (prec+=1)    # printing is done here.
   end
-  
+
   require 'parslet/atoms/can_flatten'
   require 'parslet/atoms/context'
   require 'parslet/atoms/dsl'
@@ -31,5 +31,5 @@ module Parslet::Atoms
   require 'parslet/atoms/dynamic'
   require 'parslet/atoms/scope'
   require 'parslet/atoms/infix'
+  require 'parslet/atoms/ignore'
 end
-

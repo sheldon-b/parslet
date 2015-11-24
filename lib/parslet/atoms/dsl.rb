@@ -1,9 +1,9 @@
 
 # A mixin module that defines operations that can be called on any subclass
-# of Parslet::Atoms::Base. These operations make parslets atoms chainable and 
+# of Parslet::Atoms::Base. These operations make parslets atoms chainable and
 # allow combination of parslet atoms to form bigger parsers.
 #
-# Example: 
+# Example:
 #
 #   str('foo') >> str('bar')
 #   str('f').repeat
@@ -11,11 +11,11 @@
 #
 module Parslet::Atoms::DSL
   # Construct a new atom that repeats the current atom min times at least and
-  # at most max times. max can be nil to indicate that no maximum is present. 
+  # at most max times. max can be nil to indicate that no maximum is present.
   #
-  # Example: 
+  # Example:
   #   # match any number of 'a's
-  #   str('a').repeat     
+  #   str('a').repeat
   #
   #   # match between 1 and 3 'a's
   #   str('a').repeat(1,3)
@@ -23,21 +23,21 @@ module Parslet::Atoms::DSL
   def repeat(min=0, max=nil)
     Parslet::Atoms::Repetition.new(self, min, max)
   end
-  
+
   # Returns a new parslet atom that is only maybe present in the input. This
-  # is synonymous to calling #repeat(0,1). Generated tree value will be 
-  # either nil (if atom is not present in the input) or the matched subtree. 
+  # is synonymous to calling #repeat(0,1). Generated tree value will be
+  # either nil (if atom is not present in the input) or the matched subtree.
   #
-  # Example: 
+  # Example:
   #   str('foo').maybe
   #
   def maybe
     Parslet::Atoms::Repetition.new(self, 0, 1, :maybe)
   end
 
-  # Chains two parslet atoms together as a sequence. 
+  # Chains two parslet atoms together as a sequence.
   #
-  # Example: 
+  # Example:
   #   str('a') >> str('b')
   #
   def >>(parslet)
@@ -46,7 +46,7 @@ module Parslet::Atoms::DSL
 
   # Chains two parslet atoms together to express alternation. A match will
   # always be attempted with the parslet on the left side first. If it doesn't
-  # match, the right side will be tried. 
+  # match, the right side will be tried.
   #
   # Example:
   #   # matches either 'a' OR 'b'
@@ -55,11 +55,11 @@ module Parslet::Atoms::DSL
   def |(parslet)
     Parslet::Atoms::Alternative.new(self, parslet)
   end
-  
+
   # Tests for absence of a parslet atom in the input stream without consuming
-  # it. 
-  # 
-  # Example: 
+  # it.
+  #
+  # Example:
   #   # Only proceed the parse if 'a' is absent.
   #   str('a').absent?
   #
@@ -68,16 +68,16 @@ module Parslet::Atoms::DSL
   end
 
   # Tests for presence of a parslet atom in the input stream without consuming
-  # it. 
-  # 
-  # Example: 
+  # it.
+  #
+  # Example:
   #   # Only proceed the parse if 'a' is present.
   #   str('a').present?
   #
   def present?
     Parslet::Atoms::Lookahead.new(self, true)
   end
-  
+
   # Alias for present? that will disappear in 2.0 (deprecated)
   #
   alias prsnt? present?
@@ -86,8 +86,8 @@ module Parslet::Atoms::DSL
   #
   alias absnt? absent?
 
-  # Marks a parslet atom as important for the tree output. This must be used 
-  # to achieve meaningful output from the #parse method. 
+  # Marks a parslet atom as important for the tree output. This must be used
+  # to achieve meaningful output from the #parse method.
   #
   # Example:
   #   str('a').as(:b) # will produce {:b => 'a'}
@@ -96,14 +96,18 @@ module Parslet::Atoms::DSL
     Parslet::Atoms::Named.new(self, name)
   end
 
-  # Captures a part of the input and stores it under the name given. This 
+  # Captures a part of the input and stores it under the name given. This
   # is very useful to create self-referential parses. A capture stores
   # the result of its parse (may be complex) on a successful parse action.
-  # 
-  # Example: 
+  #
+  # Example:
   #   str('a').capture(:b)  # will store captures[:b] == 'a'
-  # 
+  #
   def capture(name)
     Parslet::Atoms::Capture.new(self, name)
+  end
+
+  def ignore
+    Parslet::Atoms::Ignore.new
   end
 end
